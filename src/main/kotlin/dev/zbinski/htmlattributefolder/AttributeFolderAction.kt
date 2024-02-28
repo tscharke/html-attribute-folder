@@ -29,12 +29,11 @@ class AttributeFolderAction : AnAction() {
         if (editor == null || project == null) {
             return
         }
-
+        settings.collapse = !settings.collapse
         ApplicationManager.getApplication().runWriteAction {
-            settings.collapse = !settings.collapse
             val foldRegions = editor.foldingModel.allFoldRegions
             editor.foldingModel.runBatchFoldingOperation {
-                getFoldRegionsForRelevantAttributes(foldRegions).forEach { fold -> fold.isExpanded = !fold.isExpanded }
+                getFoldRegionsForRelevantAttributes(foldRegions).forEach { fold -> fold.isExpanded = !settings.collapse }
             }
         }
     }
