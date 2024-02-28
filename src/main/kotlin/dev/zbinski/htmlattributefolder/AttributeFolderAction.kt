@@ -23,6 +23,10 @@ class AttributeFolderAction : AnAction() {
 
     }
 
+    private fun performFoldOperation(fold: FoldRegion) {
+        fold.isExpanded = !settings.collapse
+    }
+
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData(CommonDataKeys.EDITOR)
         val project = e.getData(CommonDataKeys.PROJECT)
@@ -30,10 +34,12 @@ class AttributeFolderAction : AnAction() {
             return
         }
         settings.collapse = !settings.collapse
+
+        val foldingModel = editor.foldingModel
+        val allFoldRegions = foldingModel.allFoldRegions
         ApplicationManager.getApplication().runWriteAction {
-            val foldRegions = editor.foldingModel.allFoldRegions
-            editor.foldingModel.runBatchFoldingOperation {
-                getFoldRegionsForRelevantAttributes(foldRegions).forEach { fold -> fold.isExpanded = !settings.collapse }
+            foldingModel.runBatchFoldingOperation {
+                getFoldRegionsForRelevantAttributes(allFoldRegions).forEach(::performFoldOperation)
             }
         }
     }
