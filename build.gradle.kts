@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 fun properties(key: String) = providers.gradleProperty(key)
 
 plugins {
@@ -33,7 +35,9 @@ tasks {
         targetCompatibility = properties("javaVersion").get()
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = properties("javaVersion").get()
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(properties("javaVersion").get()))
+        }
     }
 
     patchPluginXml {
