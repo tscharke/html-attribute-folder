@@ -1,8 +1,10 @@
-name: Generate Changelog
+name: Generate HTML-Attribute-Folder-Changelog
 on:
-  release:
-    types: [created]
-
+  workflow_run:
+    workflows:
+      - Build HTML-Attribute-Folder
+    types:
+      - completed
 jobs:
   generate-changelog:
     runs-on: ubuntu-latest
