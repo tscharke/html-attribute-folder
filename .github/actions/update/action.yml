@@ -9,6 +9,7 @@ runs:
         ACCESS_TOKEN: ${{ inputs.github_token }}
         COMMIT_MESSAGE: "docs(changelog): 📚 Update release notes for ${{ inputs.version }}"
         TYPE: "feat:Feature,fix:Fixes,docs:Documentation"
+        BRANCH: ${{ github.ref_name }}
 
     - name: Update Git Tag
       shell: bash
