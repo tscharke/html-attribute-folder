@@ -1,10 +1,8 @@
 name: Generate HTML-Attribute-Folder-Changelog
 on:
-  workflow_run:
-    workflows:
-      - Build HTML-Attribute-Folder
-    types:
-      - completed
+  push:
+    branches:
+      - '**'
 jobs:
   generate-changelog:
     runs-on: ubuntu-latest
