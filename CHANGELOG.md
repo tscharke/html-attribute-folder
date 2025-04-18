@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## [v1.2.0](https://github.com/tscharke/html-attribute-folder/releases/tag/v1.2.0) - 2025-04-18 15:13:58
+
+*No description*
+
+### Feature
+
+- general:
+  - Support for RHTML and ERB templates ([b6fba38](https://github.com/tscharke/html-attribute-folder/commit/b6fba3800014f4df68c6e9154c2fe8681bbf4b62))
+  - Support platform-version 2025.x ([8994915](https://github.com/tscharke/html-attribute-folder/commit/8994915122e5b6def2ebe025be2614dc18c81ded)) ([#7](https://github.com/tscharke/html-attribute-folder/pull/7))
+  - Prepare new version 1.1.3 ([2cce725](https://github.com/tscharke/html-attribute-folder/commit/2cce7257ec945eddb0ee192d1f1cef7f61838eba))
+  - Support platform-version 2024.3 ([5fddc44](https://github.com/tscharke/html-attribute-folder/commit/5fddc447dc9d1e2fa8a509e8fe0b90ca10c5e216))
+
+### Fixes
+
+- changelog:
+  - Create after release ([141e878](https://github.com/tscharke/html-attribute-folder/commit/141e878e62724f33a9926e1fc05b93dff614cc93))
+  - Create after release ([d82f6c2](https://github.com/tscharke/html-attribute-folder/commit/d82f6c23f80eaf906c8e937bc08f67bdbb423399))
+
+- general:
+  - Use compilerOptions out of the properties ([ecba42b](https://github.com/tscharke/html-attribute-folder/commit/ecba42b3755a6168c45319e6a8008c0d82ad051a))
+
+### Fixes
+
+- general:
+  - Generate changelog ([a9498b0](https://github.com/tscharke/html-attribute-folder/commit/a9498b01a4a748eec5f2ef39c2f5450719ce6e4b))
+  - Update gradle-version ([08e3d95](https://github.com/tscharke/html-attribute-folder/commit/08e3d959e59e35f045b02f2d826cd4cc05485a0b))
+
 ## [v1.1.2](https://github.com/tscharke/html-attribute-folder/releases/tag/v1.1.2) - 2024-08-25 13:27:00
 
 *No description*
