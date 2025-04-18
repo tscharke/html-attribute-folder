@@ -1,31 +1,60 @@
-name: Build HTML-Attribute-Folder
+name: Build and Release HTML-Attribute-Folder
 on:
   push:
     tags:
       - 'v*'
+
 jobs:
-  build-gradle-project:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Get the version
-        id: get_version
-        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       - name: Checkout project sources
         uses: actions/checkout@v4
-      - name: Setup Java
-        uses: actions/setup-java@v4
         with:
-          distribution: 'oracle'
-          java-version: 17
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Build PlugIn
-        run: ./gradlew buildPlugin
-      - name: Release PlugIn
-        uses: ncipollo/release-action@v1
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+
+      - name: Get the version
+        id: versions
+        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Get branch data
+        uses: tj-actions/branch-names@v7
+        id: branches
+
+      - name: Debug
+        shell: bash
+        run: |
+          echo "Version: ${{ steps.versions.outputs.TAGGED_VERSION }}"
+          echo "Branch : ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}"
+
+      - name: Build and Release
+        uses: ./.github/actions/build
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "build/distributions/html-attribute-folder-*.zip"
-          name: "html-attribute-folder-${{ steps.get_version.outputs.TAGGED_VERSION }}.zip"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.versions.outputs.TAGGED_VERSION }}
+
+      - name: Create changelog
+        uses: ./.github/actions/changelog
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.versions.outputs.TAGGED_VERSION }}
+          branch_name: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}
+
+      # After creating the changelog, check out the latest changes to
+      # set the tag correctly and on the CHANGELOG.md too
+      - name: Checkout latest changes
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}
+
+      - name: Update tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "v${{ steps.versions.outputs.TAGGED_VERSION }}"
+          message: "Release ${{ steps.versions.outputs.TAGGED_VERSION }}"
+          force_push_tag: "true"
