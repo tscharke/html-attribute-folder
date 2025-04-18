@@ -1,38 +1,37 @@
 name: Generate HTML-Attribute-Folder-Changelog
 on:
-  push:
-    branches:
-      - '**'
+  workflow_run:
+    workflows:
+      - Build HTML-Attribute-Folder # Name des vorherigen Workflows
+    types:
+      - completed
 jobs:
   generate-changelog:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Get tag from previous workflow
+      - name: Get Tag from Previous Workflow
         id: fetch_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           WORKFLOW_RUN_URL="https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
           echo "Fetching event data from: $WORKFLOW_RUN_URL"
-          TAG=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" $WORKFLOW_RUN_URL | jq -r '.head_commit.ref')
+          
+          # API-Call to get metadata of the workflow run
+          RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" $WORKFLOW_RUN_URL)
+          echo "API Response: $RESPONSE"
+
+          # Parse the Tag from the Response
+          TAG=$(echo "$RESPONSE" | jq -r '.head_commit.message')
+
+          # Verify if Tag was Found
+          if [ -z "$TAG" ] || [ "$TAG" = "null" ]; then
+            echo "Error: Could not find tag!"
+            exit 1
+          fi
+
           TAG=${TAG#refs/tags/}
           echo "Detected Tag: $TAG"
           echo "TAG=$TAG" >> $GITHUB_ENV
-      - name: Generate Changelog
-        uses: BobAnkh/auto-generate-changelog@v1.2.5
-        with:
-          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_MESSAGE: "docs(CHANGELOG): 📚 Update release notes for ${{ env.TAG }}"
-          TYPE: "feat:Feature,fix:Fixes,chore:Fixes,docs:Documentation,refactor:Refactor"
-      - name: Update Git Tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "Deleting and recreating Git tag: ${{ env.TAG }}"
-          git tag -d "${{ env.TAG }}" || true
-          git tag "${{ env.TAG }}"
-          git push origin "${{ env.TAG }}" --force
