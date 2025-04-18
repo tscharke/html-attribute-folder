@@ -7,8 +7,8 @@ runs:
       uses: BobAnkh/auto-generate-changelog@v1.2.5
       with:
         ACCESS_TOKEN: ${{ inputs.github_token }}
-        COMMIT_MESSAGE: "docs(CHANGELOG): 📚 Update release notes for ${{ inputs.version }}"
-        TYPE: "feat:Feature,fix:Fixes,chore:Fixes,docs:Documentation,refactor:Refactor"
+        COMMIT_MESSAGE: "docs(changelog): 📚 Update release notes for ${{ inputs.version }}"
+        TYPE: "feat:Feature,fix:Fixes,docs:Documentation"
 
     - name: Update Git Tag
       shell: bash
