@@ -35,3 +35,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: "v${{ needs.build.outputs.version }}"
+          branch_name: ${{ github.ref_name }}
+

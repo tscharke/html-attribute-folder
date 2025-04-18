@@ -9,7 +9,7 @@ runs:
         ACCESS_TOKEN: ${{ inputs.github_token }}
         COMMIT_MESSAGE: "docs(changelog): 📚 Update release notes for ${{ inputs.version }}"
         TYPE: "feat:Feature,fix:Fixes,docs:Documentation"
-        BRANCH: ${{ github.ref_name }}
+        BRANCH: ${{ inputs.branch_name }}
 
     - name: Update Git Tag
       shell: bash
@@ -30,4 +30,7 @@ inputs:
     required: true
   version:
     description: Version of the Release
+    required: true
+  branch_name:
+    description: Name of the branch
     required: true
