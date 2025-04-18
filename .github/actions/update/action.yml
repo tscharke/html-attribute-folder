@@ -1,0 +1,32 @@
+name: Generate HTML-Attribute-Changelog
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate changelog
+      uses: BobAnkh/auto-generate-changelog@v1.2.5
+      with:
+        ACCESS_TOKEN: ${{ inputs.github_token }}
+        COMMIT_MESSAGE: "docs(CHANGELOG): 📚 Update release notes for ${{ inputs.version }}"
+        TYPE: "feat:Feature,fix:Fixes,chore:Fixes,docs:Documentation,refactor:Refactor"
+
+    - name: Update Git Tag
+      shell: bash
+      run: |
+        CURRENT_GIT_TAG=${{ inputs.version }}
+        EXISTING_TAG=$(git tag -l "${CURRENT_GIT_TAG}")
+        if [ -n "$EXISTING_TAG" ]; then
+          echo "Git Tag '$CURRENT_GIT_TAG' already exists. Deleting and updating the tag."
+          git tag -d "${CURRENT_GIT_TAG}"
+        fi
+        git tag "${CURRENT_GIT_TAG}"
+        git push origin "${CURRENT_GIT_TAG}" --force
+        echo "Updated Git Tag: ${CURRENT_GIT_TAG}"
+
+inputs:
+  github_token:
+    description: Access Token for GitHub
+    required: true
+  version:
+    description: Version of the Release
+    required: true

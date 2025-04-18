@@ -1,31 +1,31 @@
-name: Build HTML-Attribute-Folder
+name: Build and Release HTML-Attribute-Folder
 on:
   push:
     tags:
       - 'v*'
+
 jobs:
-  build-gradle-project:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
     steps:
-      - name: Get the version
+      - name: Get version
         id: get_version
         run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-      - name: Checkout project sources
-        uses: actions/checkout@v4
-      - name: Setup Java
-        uses: actions/setup-java@v4
+
+      - name: Build and Release
+        uses: ./.github/actions/build
         with:
-          distribution: 'oracle'
-          java-version: 17
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-      - name: Build PlugIn
-        run: ./gradlew buildPlugin
-      - name: Release PlugIn
-        uses: ncipollo/release-action@v1
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
+
+  update:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Create changelog
+        uses: ./.github/actions/update
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "build/distributions/html-attribute-folder-*.zip"
-          name: "html-attribute-folder-${{ steps.get_version.outputs.TAGGED_VERSION }}.zip"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: "v${{ needs.build.outputs.version }}"
