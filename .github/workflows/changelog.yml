@@ -13,20 +13,28 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Get the version
-        id: get_version
-        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Get tag from previous workflow
+        id: fetch_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          WORKFLOW_RUN_URL="https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}"
+          echo "Fetching event data from: $WORKFLOW_RUN_URL"
+          TAG=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" $WORKFLOW_RUN_URL | jq -r '.head_commit.ref')
+          TAG=${TAG#refs/tags/}
+          echo "Detected Tag: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
       - name: Generate Changelog
         uses: BobAnkh/auto-generate-changelog@v1.2.5
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_MESSAGE: 'docs(CHANGELOG): 📚 Update release notes'
-          TYPE: 'feat:Feature,fix:Fixes,chore:Fixes,docs:Documentation,refactor:Refactor'
+          COMMIT_MESSAGE: "docs(CHANGELOG): 📚 Update release notes for ${{ env.TAG }}"
+          TYPE: "feat:Feature,fix:Fixes,chore:Fixes,docs:Documentation,refactor:Refactor"
       - name: Update Git Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "CURRENT_TAG=${{ steps.get_version.outputs.CURRENT_TAG }}"
-          git tag -d "${{ steps.get_version.outputs.CURRENT_TAG }}"
-          git tag "${{ steps.get_version.outputs.CURRENT_TAG }}"
-          git push origin "${{ steps.get_version.outputs.CURRENT_TAG }}" --force
+          echo "Deleting and recreating Git tag: ${{ env.TAG }}"
+          git tag -d "${{ env.TAG }}" || true
+          git tag "${{ env.TAG }}"
+          git push origin "${{ env.TAG }}" --force
