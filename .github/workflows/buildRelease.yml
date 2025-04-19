@@ -15,6 +15,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: ${{ github.ref }}
 
       - name: Get branch name
         id: get_branch
