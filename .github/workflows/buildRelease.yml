@@ -17,11 +17,11 @@ jobs:
         id: get_version
         run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Build and Release
-        uses: ./.github/actions/build
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
+#      - name: Build and Release
+#        uses: ./.github/actions/build
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
 
   update:
     runs-on: ubuntu-latest

@@ -3,6 +3,12 @@ name: Generate HTML-Attribute-Changelog
 runs:
   using: "composite"
   steps:
+    - name: Debug
+      shell: bash
+      run: |
+        echo "Version: ${{ inputs.version }}"
+        echo "Branch:  ${{ inputs.branch_name }}"
+
     - name: Generate changelog
       uses: BobAnkh/auto-generate-changelog@v1.2.5
       with:
