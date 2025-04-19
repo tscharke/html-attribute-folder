@@ -20,7 +20,7 @@ runs:
     - name: Update Git Tag
       shell: bash
       run: |
-        CURRENT_GIT_TAG=${{ inputs.version }}
+        CURRENT_GIT_TAG="v${{ inputs.version }}"
         EXISTING_TAG=$(git tag -l "${CURRENT_GIT_TAG}")
         if [ -n "$EXISTING_TAG" ]; then
           echo "Git Tag '$CURRENT_GIT_TAG' already exists. Deleting and updating the tag."

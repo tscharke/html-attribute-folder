@@ -18,31 +18,31 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: Get the version
-        id: get_version
+        id: versions
         run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Get branch name
+      - name: Get branch data
         uses: tj-actions/branch-names@v7
-        id: get_branch
-
-#      - name: Get branch name
-#        id: get_branch
-#        shell: bash
-#        run: |
-#          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-#            BRANCH=$(git show-ref | grep $(git rev-parse HEAD) | grep "refs/heads/" | head -n 1 | sed 's!.*/!!')
-#            echo "BRANCH_NAME=${BRANCH}" >> $GITHUB_OUTPUT
-#          else
-#            echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-#          fi
+        id: branches
 
       - name: Debug
         shell: bash
         run: |
-          echo "Branch : ${{ steps.get_branch.outputs.BRANCH_NAME }}"
-          echo "Version: ${{ steps.get_version.outputs.TAGGED_VERSION }}"
-          echo "Tag-Name: ${{ steps.branch-names.outputs.tag }}"
-          echo "Branch-Name (wenn verfügbar): ${{ steps.get_branch.outputs.base_ref_branch || steps.get_branch.outputs.current_branch }}"
+          echo "Current Branch: ${{ steps.branches.outputs.current_branch }}"
+          echo "Base Ref Branch: ${{ steps.branches.outputs.base_ref_branch }}"
+          echo "Tag: ${{ steps.branches.outputs.tag }}"
+          echo "Ref Type: ${{ steps.branches.outputs.ref_type }}"
+          echo "Combined Branch: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}"
+          echo "Version: ${{ steps.versions.outputs.TAGGED_VERSION }}"
+          echo "Branch : ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}"
+
+      - name: Create changelog
+        uses: ./.github/actions/update
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.versions.outputs.TAGGED_VERSION }}
+          branch_name: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}
+
 
 #      - name: Setup Java
 #        uses: actions/setup-java@v4
@@ -104,18 +104,4 @@ jobs:
 #        with:
 #          github_token: ${{ secrets.GITHUB_TOKEN }}
 #          version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
-#
-#  update:
-#    runs-on: ubuntu-latest
-#    needs: build
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: Create changelog
-#        uses: ./.github/actions/update
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          version: "v${{ needs.build.outputs.version }}"
-#          branch_name: ${{ github.ref_name }}
 #
