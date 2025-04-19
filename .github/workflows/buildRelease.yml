@@ -24,38 +24,6 @@ jobs:
       - name: Get branch name
         uses: FranzDiebold/github-env-vars-action@v2
         id: get_branch
-        shell: bash
-        run: |
-          echo "CI_REPOSITORY_SLUG=$CI_REPOSITORY_SLUG"
-          echo "CI_REPOSITORY_OWNER=$CI_REPOSITORY_OWNER"
-          echo "CI_REPOSITORY_OWNER_SLUG=$CI_REPOSITORY_OWNER_SLUG"
-          echo "CI_REPOSITORY_NAME=$CI_REPOSITORY_NAME"
-          echo "CI_REPOSITORY_NAME_SLUG=$CI_REPOSITORY_NAME_SLUG"
-          echo "CI_REPOSITORY=$CI_REPOSITORY"
-          echo "CI_REF_SLUG=$CI_REF_SLUG"
-          echo "CI_ACTION_REF_NAME=$CI_ACTION_REF_NAME"
-          echo "CI_ACTION_REF_NAME_SLUG=$CI_ACTION_REF_NAME_SLUG"
-          echo "CI_REF_NAME=$CI_REF_NAME"
-          echo "CI_REF_NAME_SLUG=$CI_REF_NAME_SLUG"
-          echo "CI_REF=$CI_REF"
-          echo "CI_HEAD_REF_SLUG=$CI_HEAD_REF_SLUG"
-          echo "CI_HEAD_REF=$CI_HEAD_REF"
-          echo "CI_BASE_REF_SLUG=$CI_BASE_REF_SLUG"
-          echo "CI_BASE_REF=$CI_BASE_REF"
-          echo "CI_SHA_SHORT=$CI_SHA_SHORT"
-          echo "CI_SHA=$CI_SHA"
-          echo "CI_PR_SHA_SHORT=$CI_PR_SHA_SHORT"
-          echo "CI_PR_SHA=$CI_PR_SHA"
-          echo "CI_PR_NUMBER=$CI_PR_NUMBER"
-          echo "CI_PR_ID=$CI_PR_ID"
-          echo "CI_PR_TITLE=$CI_PR_TITLE"
-          echo "CI_PR_DESCRIPTION=$CI_PR_DESCRIPTION"
-          echo "CI_ACTOR=$CI_ACTOR"
-          echo "CI_EVENT_NAME=$CI_EVENT_NAME"
-          echo "CI_RUN_ID=$CI_RUN_ID"
-          echo "CI_RUN_NUMBER=$CI_RUN_NUMBER"
-          echo "CI_WORKFLOW=$CI_WORKFLOW"
-          echo "CI_ACTION=$CI_ACTION"
 
 #      - name: Get branch name
 #        id: get_branch
@@ -72,7 +40,37 @@ jobs:
         shell: bash
         run: |
           echo "Version: ${{ steps.get_version.outputs.TAGGED_VERSION }}"
-          echo "Branch:  ${{ steps.get_branch.outputs.BRANCH_NAME }}"
+          echo "Branch : ${{ steps.get_branch.outputs.BRANCH_NAME }}"
+          echo "CI_REPOSITORY_SLUG=${{ steps.get_branch.outputs.CI_REPOSITORY_SLUG }}"
+          echo "CI_REPOSITORY_OWNER=${{ steps.get_branch.outputs.CI_REPOSITORY_OWNER }}"
+          echo "CI_REPOSITORY_OWNER_SLUG=${{ steps.get_branch.outputs.CI_REPOSITORY_OWNER_SLUG }}"
+          echo "CI_REPOSITORY_NAME=${{ steps.get_branch.outputs.CI_REPOSITORY_NAME }}"
+          echo "CI_REPOSITORY_NAME_SLUG=${{ steps.get_branch.outputs.CI_REPOSITORY_NAME_SLUG }}"
+          echo "CI_REPOSITORY=${{ steps.get_branch.outputs.CI_REPOSITORY }}"
+          echo "CI_REF_SLUG=${{ steps.get_branch.outputs.CI_REF_SLUG }}"
+          echo "CI_ACTION_REF_NAME=${{ steps.get_branch.outputs.CI_ACTION_REF_NAME }}"
+          echo "CI_ACTION_REF_NAME_SLUG=${{ steps.get_branch.outputs.CI_ACTION_REF_NAME_SLUG }}"
+          echo "CI_REF_NAME=${{ steps.get_branch.outputs.CI_REF_NAME }}"
+          echo "CI_REF_NAME_SLUG=${{ steps.get_branch.outputs.CI_REF_NAME_SLUG }}"
+          echo "CI_REF=${{ steps.get_branch.outputs.CI_REF }}"
+          echo "CI_HEAD_REF_SLUG=${{ steps.get_branch.outputs.CI_HEAD_REF_SLUG }}"
+          echo "CI_HEAD_REF=${{ steps.get_branch.outputs.CI_HEAD_REF }}"
+          echo "CI_BASE_REF_SLUG=${{ steps.get_branch.outputs.CI_BASE_REF_SLUG }}"
+          echo "CI_BASE_REF=${{ steps.get_branch.outputs.CI_BASE_REF }}"
+          echo "CI_SHA_SHORT=${{ steps.get_branch.outputs.CI_SHA_SHORT }}"
+          echo "CI_SHA=${{ steps.get_branch.outputs.CI_SHA }}"
+          echo "CI_PR_SHA_SHORT=${{ steps.get_branch.outputs.CI_PR_SHA_SHORT }}"
+          echo "CI_PR_SHA=${{ steps.get_branch.outputs.CI_PR_SHA }}"
+          echo "CI_PR_NUMBER=${{ steps.get_branch.outputs.CI_PR_NUMBER }}"
+          echo "CI_PR_ID=${{ steps.get_branch.outputs.CI_PR_ID }}"
+          echo "CI_PR_TITLE=${{ steps.get_branch.outputs.CI_PR_TITLE }}"
+          echo "CI_PR_DESCRIPTION=${{ steps.get_branch.outputs.CI_PR_DESCRIPTION }}"
+          echo "CI_ACTOR=${{ steps.get_branch.outputs.CI_ACTOR }}"
+          echo "CI_EVENT_NAME=${{ steps.get_branch.outputs.CI_EVENT_NAME }}"
+          echo "CI_RUN_ID=${{ steps.get_branch.outputs.CI_RUN_ID }}"
+          echo "CI_RUN_NUMBER=${{ steps.get_branch.outputs.CI_RUN_NUMBER }}"
+          echo "CI_WORKFLOW=${{ steps.get_branch.outputs.CI_WORKFLOW }}"
+          echo "CI_ACTION=${{ steps.get_branch.outputs.CI_ACTION }}"
 
 #      - name: Setup Java
 #        uses: actions/setup-java@v4
