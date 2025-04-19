@@ -17,16 +17,20 @@ jobs:
           fetch-tags: true
           ref: ${{ github.ref }}
 
+      - name: Get the version
+        id: get_version
+        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
       - name: Get branch name
         id: get_branch
         shell: bash
         run: |
-          BRANCH=$(git branch --contains "$(git rev-parse HEAD)" | grep -v "detached" | sed 's/* //')
-          echo "BRANCH_NAME=${BRANCH}" >> $GITHUB_OUTPUT
-
-      - name: Get the version
-        id: get_version
-        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            BRANCH=$(git show-ref | grep $(git rev-parse HEAD) | grep "refs/heads/" | head -n 1 | sed 's!.*/!!')
+            echo "BRANCH_NAME=${BRANCH}" >> $GITHUB_OUTPUT
+          else
+            echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Debug
         shell: bash
