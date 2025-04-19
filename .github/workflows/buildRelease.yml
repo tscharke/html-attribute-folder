@@ -28,80 +28,25 @@ jobs:
       - name: Debug
         shell: bash
         run: |
-          echo "Current Branch: ${{ steps.branches.outputs.current_branch }}"
-          echo "Base Ref Branch: ${{ steps.branches.outputs.base_ref_branch }}"
-          echo "Tag: ${{ steps.branches.outputs.tag }}"
-          echo "Ref Type: ${{ steps.branches.outputs.ref_type }}"
-          echo "Combined Branch: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}"
           echo "Version: ${{ steps.versions.outputs.TAGGED_VERSION }}"
           echo "Branch : ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}"
 
+      - name: Build and Release
+        uses: ./.github/actions/build
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.versions.outputs.TAGGED_VERSION }}
+
       - name: Create changelog
-        uses: ./.github/actions/update
+        uses: ./.github/actions/changelog
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ steps.versions.outputs.TAGGED_VERSION }}
           branch_name: ${{ steps.branches.outputs.base_ref_branch || steps.branches.outputs.current_branch }}
 
-
-#      - name: Setup Java
-#        uses: actions/setup-java@v4
-#        with:
-#          distribution: 'oracle'
-#          java-version: 21
-#
-#      - name: Setup Gradle
-#        uses: gradle/actions/setup-gradle@v4
-#
-#      - name: Build PlugIn
-#        run: ./gradlew buildPlugin
-#
-#      - name: Release PlugIn
-#        uses: ncipollo/release-action@v1
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          artifacts: "build/distributions/html-attribute-folder-*.zip"
-#          name: "html-attribute-folder-${{ steps.get_version.outputs.TAGGED_VERSION }}.zip"
-#
-#      - name: Generate changelog
-#        uses: BobAnkh/auto-generate-changelog@v1.2.5
-#        with:
-#          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          COMMIT_MESSAGE: "docs(changelog): 📚 Update release notes for ${{ steps.get_version.outputs.TAGGED_VERSION }}"
-#          TYPE: "feat:Feature,fix:Fixes,docs:Documentation"
-#          BRANCH: ${{ steps.get_branch.outputs.BRANCH_NAME }}
-#
-#      - name: Update version tag
-#        shell: bash
-#        run: |
-#          echo "Version: ${{ steps.get_version.outputs.TAGGED_VERSION }}"
-#
-#          CURRENT_GIT_TAG="v${{ steps.get_version.outputs.TAGGED_VERSION }}"
-#          EXISTING_TAG=$(git tag -l "${CURRENT_GIT_TAG}")
-#          if [ -n "$EXISTING_TAG" ]; then
-#            echo "Version tag '$CURRENT_GIT_TAG' already exists. Deleting and updating the tag."
-#            git tag -d "${CURRENT_GIT_TAG}"
-#          fi
-#          git tag "${CURRENT_GIT_TAG}"
-#          git push origin "${CURRENT_GIT_TAG}" --force
-#          echo "Updated version tag: ${CURRENT_GIT_TAG}"
-
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    outputs:
-#      version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: Get version
-#        id: get_version
-#        run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-#
-#      - name: Build and Release
-#        uses: ./.github/actions/build
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          version: ${{ steps.get_version.outputs.TAGGED_VERSION }}
-#
+      - name: Update tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "v${{ steps.versions.outputs.TAGGED_VERSION }}"
+          message: "Release ${{ steps.versions.outputs.TAGGED_VERSION }}"
+          force_push_tag: "true"

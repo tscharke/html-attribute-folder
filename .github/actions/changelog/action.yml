@@ -1,0 +1,22 @@
+name: Generate HTML-Attribute-Changelog
+
+runs:
+  using: "composite"
+  steps:
+    - uses: BobAnkh/auto-generate-changelog@v1.2.5
+      with:
+        ACCESS_TOKEN: ${{ inputs.github_token }}
+        COMMIT_MESSAGE: "docs(changelog): 📚 Update release notes for ${{ inputs.version }}"
+        TYPE: "feat:Feature,fix:Fixes,docs:Documentation"
+        BRANCH: ${{ inputs.branch_name }}
+
+inputs:
+  github_token:
+    description: Access Token for GitHub
+    required: true
+  version:
+    description: Version of the Release
+    required: true
+  branch_name:
+    description: Name of the branch
+    required: true
