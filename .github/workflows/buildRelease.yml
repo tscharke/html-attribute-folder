@@ -22,7 +22,7 @@ jobs:
         run: echo "TAGGED_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Get branch name
-        uses: FranzDiebold/github-env-vars-action@v2
+        uses: tj-actions/branch-names@v7
         id: get_branch
 
 #      - name: Get branch name
@@ -39,9 +39,10 @@ jobs:
       - name: Debug
         shell: bash
         run: |
-          echo "Version: ${{ steps.get_version.outputs.TAGGED_VERSION }}"
           echo "Branch : ${{ steps.get_branch.outputs.BRANCH_NAME }}"
-          env
+          echo "Version: ${{ steps.get_version.outputs.TAGGED_VERSION }}"
+          echo "Tag-Name: ${{ steps.branch-names.outputs.tag }}"
+          echo "Branch-Name (wenn verfügbar): ${{ steps.get_branch.outputs.base_ref_branch || steps.get_branch.outputs.current_branch }}"
 
 #      - name: Setup Java
 #        uses: actions/setup-java@v4
